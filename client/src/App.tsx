@@ -6,12 +6,14 @@ import NotFound from "@/pages/not-found";
 import Dashboard from "@/pages/Dashboard";
 import CaseView from "@/pages/CaseView";
 import TranscriptView from "@/pages/TranscriptView";
+import TranscriptList from "@/pages/TranscriptList";
 
 function Router() {
   return (
     <Switch>
       <Route path="/" component={Dashboard} />
       <Route path="/cases/:id" component={CaseView} />
+      <Route path="/transcripts" component={TranscriptList} />
       <Route path="/transcripts/:id" component={TranscriptView} />
       {/* Fallback to 404 */}
       <Route component={NotFound} />

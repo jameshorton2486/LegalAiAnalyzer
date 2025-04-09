@@ -23,65 +23,60 @@ export function Sidebar() {
     <aside className="w-full md:w-64 bg-white border-r border-neutral-300 md:h-[calc(100vh-57px)] md:sticky md:top-[57px]">
       <nav className="p-4">
         <div className="space-y-1">
-          <Link href="/">
-            <a
-              className={`flex items-center space-x-3 px-3 py-2 rounded-md ${
-                location === "/"
-                  ? "bg-primary-light bg-opacity-10 text-primary-dark"
-                  : "hover:bg-neutral-200 text-neutral-600 hover:text-neutral-700"
-              }`}
-            >
-              <FaHome />
-              <span className="text-sm font-medium">Dashboard</span>
-            </a>
+          <Link 
+            href="/"
+            className={`flex items-center space-x-3 px-3 py-2 rounded-md ${
+              location === "/"
+                ? "bg-primary-light bg-opacity-10 text-primary-dark"
+                : "hover:bg-neutral-200 text-neutral-600 hover:text-neutral-700"
+            }`}
+          >
+            <FaHome />
+            <span className="text-sm font-medium">Dashboard</span>
           </Link>
-          <Link href="/cases">
-            <a
-              className={`flex items-center space-x-3 px-3 py-2 rounded-md ${
-                location.startsWith("/cases") && location !== "/cases/new"
-                  ? "bg-primary-light bg-opacity-10 text-primary-dark"
-                  : "hover:bg-neutral-200 text-neutral-600 hover:text-neutral-700"
-              }`}
-            >
-              <FaFolder />
-              <span className="text-sm font-medium">Cases</span>
-            </a>
+          <Link 
+            href="/cases"
+            className={`flex items-center space-x-3 px-3 py-2 rounded-md ${
+              location.startsWith("/cases") && location !== "/cases/new"
+                ? "bg-primary-light bg-opacity-10 text-primary-dark"
+                : "hover:bg-neutral-200 text-neutral-600 hover:text-neutral-700"
+            }`}
+          >
+            <FaFolder />
+            <span className="text-sm font-medium">Cases</span>
           </Link>
-          <Link href="/transcripts">
-            <a
-              className={`flex items-center space-x-3 px-3 py-2 rounded-md ${
-                location.startsWith("/transcripts")
-                  ? "bg-primary-light bg-opacity-10 text-primary-dark"
-                  : "hover:bg-neutral-200 text-neutral-600 hover:text-neutral-700"
-              }`}
-            >
-              <FaFileAlt />
-              <span className="text-sm font-medium">Transcripts</span>
-            </a>
+          <Link 
+            href="/transcripts"
+            className={`flex items-center space-x-3 px-3 py-2 rounded-md ${
+              location.startsWith("/transcripts")
+                ? "bg-primary-light bg-opacity-10 text-primary-dark"
+                : "hover:bg-neutral-200 text-neutral-600 hover:text-neutral-700"
+            }`}
+          >
+            <FaFileAlt />
+            <span className="text-sm font-medium">Transcripts</span>
           </Link>
-          <Link href="/insights">
-            <a
-              className={`flex items-center space-x-3 px-3 py-2 rounded-md ${
-                location.startsWith("/insights")
-                  ? "bg-primary-light bg-opacity-10 text-primary-dark"
-                  : "hover:bg-neutral-200 text-neutral-600 hover:text-neutral-700"
-              }`}
-            >
-              <FaLightbulb />
-              <span className="text-sm font-medium">AI Insights</span>
-            </a>
+          <Link 
+            href="/insights"
+            className={`flex items-center space-x-3 px-3 py-2 rounded-md ${
+              location.startsWith("/insights")
+                ? "bg-primary-light bg-opacity-10 text-primary-dark"
+                : "hover:bg-neutral-200 text-neutral-600 hover:text-neutral-700"
+            }`}
+          >
+            <FaLightbulb />
+            <span className="text-sm font-medium">AI Insights</span>
           </Link>
-          <Link href="/settings">
-            <a
-              className={`flex items-center space-x-3 px-3 py-2 rounded-md ${
-                location.startsWith("/settings")
-                  ? "bg-primary-light bg-opacity-10 text-primary-dark"
-                  : "hover:bg-neutral-200 text-neutral-600 hover:text-neutral-700"
-              }`}
-            >
-              <FaCog />
-              <span className="text-sm font-medium">Settings</span>
-            </a>
+          <Link 
+            href="/settings"
+            className={`flex items-center space-x-3 px-3 py-2 rounded-md ${
+              location.startsWith("/settings")
+                ? "bg-primary-light bg-opacity-10 text-primary-dark"
+                : "hover:bg-neutral-200 text-neutral-600 hover:text-neutral-700"
+            }`}
+          >
+            <FaCog />
+            <span className="text-sm font-medium">Settings</span>
           </Link>
         </div>
 
@@ -91,11 +86,13 @@ export function Sidebar() {
           </h3>
           <div className="mt-2 space-y-1">
             {recentCases.map((caseItem) => (
-              <Link key={caseItem.id} href={`/cases/${caseItem.id}`}>
-                <a className="flex items-center space-x-3 px-3 py-2 rounded-md hover:bg-neutral-200 text-neutral-600 hover:text-neutral-700">
-                  <FaFolder className="text-sm text-neutral-400" />
-                  <span className="text-sm">{caseItem.title}</span>
-                </a>
+              <Link 
+                key={caseItem.id} 
+                href={`/cases/${caseItem.id}`}
+                className="flex items-center space-x-3 px-3 py-2 rounded-md hover:bg-neutral-200 text-neutral-600 hover:text-neutral-700"
+              >
+                <FaFolder className="text-sm text-neutral-400" />
+                <span className="text-sm">{caseItem.title}</span>
               </Link>
             ))}
 
