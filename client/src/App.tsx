@@ -9,6 +9,7 @@ import TranscriptView from "@/pages/TranscriptView";
 import TranscriptList from "@/pages/TranscriptList";
 import Insights from "@/pages/Insights";
 import Contradictions from "@/pages/Contradictions";
+import Settings from "@/pages/Settings";
 
 function Router() {
   return (
@@ -19,6 +20,7 @@ function Router() {
       <Route path="/transcripts/:id" component={TranscriptView} />
       <Route path="/insights" component={Insights} />
       <Route path="/contradictions/:caseId?" component={Contradictions} />
+      <Route path="/settings" component={Settings} />
       {/* Fallback to 404 */}
       <Route component={NotFound} />
     </Switch>

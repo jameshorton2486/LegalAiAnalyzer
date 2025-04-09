@@ -395,19 +395,4 @@ async function findContradictions(content1: string, content2: string) {
   }
 }
 
-// Get all contradictions or filtered by case ID
-app.get("/api/contradictions", async (req: Request, res: Response) => {
-  try {
-    const caseId = req.query.caseId ? parseInt(req.query.caseId as string) : undefined;
-    
-    if (caseId) {
-      const contradictions = await storage.getContradictionsByCaseId(caseId);
-      return res.json(contradictions);
-    } else {
-      const contradictions = await storage.getAllContradictions();
-      return res.json(contradictions);
-    }
-  } catch (error) {
-    handleError(error, res);
-  }
-});
+

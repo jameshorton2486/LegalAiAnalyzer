@@ -123,7 +123,7 @@ export default function Contradictions() {
             </CardHeader>
             <CardFooter>
               <Button asChild variant="outline">
-                <Link href={caseId ? `/case/${caseId}` : "/dashboard"}>
+                <Link href={caseId ? `/cases/${caseId}` : "/dashboard"}>
                   {caseId ? "Back to Case" : "Go to Dashboard"}
                 </Link>
               </Button>
@@ -132,16 +132,19 @@ export default function Contradictions() {
         )}
 
         {/* Contradictions list */}
-        {!contradictionsQuery.isLoading && contradictionsQuery.data?.length > 0 && (
-          <div className="grid grid-cols-1 gap-6">
-            {contradictionsQuery.data.map((contradiction: any) => (
-              <ContradictionCard 
-                key={contradiction.id} 
-                contradiction={contradiction} 
-              />
-            ))}
-          </div>
-        )}
+        {!contradictionsQuery.isLoading && 
+          contradictionsQuery.data && 
+          Array.isArray(contradictionsQuery.data) && 
+          contradictionsQuery.data.length > 0 && (
+            <div className="grid grid-cols-1 gap-6">
+              {contradictionsQuery.data.map((contradiction: Contradiction) => (
+                <ContradictionCard 
+                  key={contradiction.id} 
+                  contradiction={contradiction} 
+                />
+              ))}
+            </div>
+          )}
       </div>
     </Layout>
   );
