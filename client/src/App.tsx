@@ -7,6 +7,8 @@ import Dashboard from "@/pages/Dashboard";
 import CaseView from "@/pages/CaseView";
 import TranscriptView from "@/pages/TranscriptView";
 import TranscriptList from "@/pages/TranscriptList";
+import Insights from "@/pages/Insights";
+import Contradictions from "@/pages/Contradictions";
 
 function Router() {
   return (
@@ -15,6 +17,8 @@ function Router() {
       <Route path="/cases/:id" component={CaseView} />
       <Route path="/transcripts" component={TranscriptList} />
       <Route path="/transcripts/:id" component={TranscriptView} />
+      <Route path="/insights" component={Insights} />
+      <Route path="/contradictions/:caseId?" component={Contradictions} />
       {/* Fallback to 404 */}
       <Route component={NotFound} />
     </Switch>

@@ -299,9 +299,12 @@ async function compareTranscripts(caseId: number, transcriptIds: number[]) {
             caseId,
             transcript1Id: transcript1.id,
             transcript2Id: transcript2.id,
+            witness1: transcript1.witnessName,
+            witness2: transcript2.witnessName,
             description: contradiction.description,
-            excerpt1: contradiction.excerpt1,
-            excerpt2: contradiction.excerpt2,
+            testimony1: contradiction.excerpt1,
+            testimony2: contradiction.excerpt2,
+            confidence: 85,
           });
         }
       }
@@ -391,3 +394,20 @@ async function findContradictions(content1: string, content2: string) {
     return [];
   }
 }
+
+// Get all contradictions or filtered by case ID
+app.get("/api/contradictions", async (req: Request, res: Response) => {
+  try {
+    const caseId = req.query.caseId ? parseInt(req.query.caseId as string) : undefined;
+    
+    if (caseId) {
+      const contradictions = await storage.getContradictionsByCaseId(caseId);
+      return res.json(contradictions);
+    } else {
+      const contradictions = await storage.getAllContradictions();
+      return res.json(contradictions);
+    }
+  } catch (error) {
+    handleError(error, res);
+  }
+});

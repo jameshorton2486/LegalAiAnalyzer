@@ -92,9 +92,12 @@ export const contradictions = pgTable("contradictions", {
   caseId: integer("caseId").notNull(),
   transcript1Id: integer("transcript1Id").notNull(),
   transcript2Id: integer("transcript2Id").notNull(),
+  witness1: text("witness1").notNull(),
+  witness2: text("witness2").notNull(),
   description: text("description").notNull(),
-  excerpt1: text("excerpt1").notNull(),
-  excerpt2: text("excerpt2").notNull(),
+  testimony1: text("testimony1").notNull(),
+  testimony2: text("testimony2").notNull(),
+  confidence: integer("confidence").notNull(),
   createdAt: timestamp("createdAt").defaultNow(),
 });
 
@@ -104,9 +107,12 @@ export const insertContradictionSchema = createInsertSchema(
   caseId: true,
   transcript1Id: true,
   transcript2Id: true,
+  witness1: true,
+  witness2: true,
   description: true,
-  excerpt1: true,
-  excerpt2: true,
+  testimony1: true,
+  testimony2: true,
+  confidence: true,
 });
 
 export type InsertContradiction = z.infer<typeof insertContradictionSchema>;

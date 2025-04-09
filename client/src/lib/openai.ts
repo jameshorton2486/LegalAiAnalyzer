@@ -13,11 +13,17 @@ export type Insight = {
 };
 
 export type Contradiction = {
-  description: string;
-  excerpt1: string;
-  excerpt2: string;
+  id: number;
+  caseId: number;
   transcript1Id: number;
   transcript2Id: number;
+  description: string;
+  witness1: string;
+  witness2: string;
+  testimony1: string;
+  testimony2: string;
+  confidence: number;
+  createdAt: Date;
 };
 
 // Fetch analysis for a transcript
@@ -54,12 +60,12 @@ export function getInsightsFromAnalysis(analysisItems: any[]) {
 
 // Fetch contradictions for a case
 export async function fetchCaseContradictions(caseId: number) {
-  const response = await apiRequest(
-    "GET",
-    `/api/cases/${caseId}/contradictions`,
-    undefined,
-  );
-  return await response.json();
+  return apiRequest<Contradiction[]>('GET', `/api/contradictions?caseId=${caseId}`);
+}
+
+// Fetch all contradictions
+export async function fetchAllContradictions() {
+  return apiRequest<Contradiction[]>('GET', '/api/contradictions');
 }
 
 // Initiate a comparison between transcripts

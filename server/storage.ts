@@ -38,6 +38,7 @@ export interface IStorage {
   createAnalysis(analysis: InsertAnalysis): Promise<Analysis>;
 
   // Contradictions
+  getAllContradictions(): Promise<Contradiction[]>;
   getContradictionsByCaseId(caseId: number): Promise<Contradiction[]>;
   createContradiction(
     contradiction: InsertContradiction,
@@ -71,10 +72,36 @@ export class MemStorage implements IStorage {
     this.contradictionCurrentId = 1;
 
     // Add some sample data
+    const caseId = this.caseCurrentId;
     this.createCase({
       title: "Smith v. Johnson",
       caseNumber: "12345",
       description: "Insurance Claim Dispute",
+    });
+    
+    // Add sample contradictions
+    this.createContradiction({
+      caseId: caseId,
+      transcript1Id: 1,
+      transcript2Id: 2,
+      witness1: "John Smith",
+      witness2: "Sarah Johnson",
+      description: "Contradicting statements about the time of the accident",
+      testimony1: "I am absolutely certain the accident occurred at approximately 3:30 PM, as I had just checked my watch before it happened.",
+      testimony2: "The accident definitely happened around 5:00 PM. I remember because I was on my way home from work.",
+      confidence: 92
+    });
+    
+    this.createContradiction({
+      caseId: caseId,
+      transcript1Id: 1,
+      transcript2Id: 3,
+      witness1: "John Smith",
+      witness2: "Officer Rodriguez",
+      description: "Disagreement about weather conditions during the incident",
+      testimony1: "It was raining heavily at the time of the accident, which is why visibility was poor.",
+      testimony2: "According to my police report, the weather was clear and dry when I arrived at the scene, approximately 10 minutes after the incident.",
+      confidence: 78
     });
   }
 
@@ -168,6 +195,10 @@ export class MemStorage implements IStorage {
   }
 
   // Contradictions
+  async getAllContradictions(): Promise<Contradiction[]> {
+    return Array.from(this.contradictionItems.values());
+  }
+  
   async getContradictionsByCaseId(caseId: number): Promise<Contradiction[]> {
     return Array.from(this.contradictionItems.values()).filter(
       (contradiction) => contradiction.caseId === caseId,

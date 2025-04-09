@@ -5,6 +5,7 @@ import {
   FaFileAlt,
   FaLightbulb,
   FaCog,
+  FaExclamationTriangle,
 } from "react-icons/fa";
 import { useQuery } from "@tanstack/react-query";
 import { Case } from "@shared/schema";
@@ -66,6 +67,17 @@ export function Sidebar() {
           >
             <FaLightbulb />
             <span className="text-sm font-medium">AI Insights</span>
+          </Link>
+          <Link 
+            href="/contradictions"
+            className={`flex items-center space-x-3 px-3 py-2 rounded-md ${
+              location.startsWith("/contradictions")
+                ? "bg-primary-light bg-opacity-10 text-primary-dark"
+                : "hover:bg-neutral-200 text-neutral-600 hover:text-neutral-700"
+            }`}
+          >
+            <FaExclamationTriangle className="text-amber-500" />
+            <span className="text-sm font-medium">Contradictions</span>
           </Link>
           <Link 
             href="/settings"
