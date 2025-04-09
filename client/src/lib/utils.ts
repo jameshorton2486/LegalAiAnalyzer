@@ -28,3 +28,25 @@ export function sanitizeUrl(url: string): string {
   
   return sanitized;
 }
+import JSZip from 'jszip';
+
+// ... existing imports and code ...
+
+export async function createAndDownloadZip(files: { name: string; content: string }[]) {
+  const zip = new JSZip();
+  
+  files.forEach(file => {
+    zip.file(file.name, file.content);
+  });
+  
+  const zipBlob = await zip.generateAsync({ type: 'blob' });
+  const downloadUrl = URL.createObjectURL(zipBlob);
+  
+  const link = document.createElement('a');
+  link.href = downloadUrl;
+  link.download = 'transcripts.zip';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(downloadUrl);
+}
