@@ -3,6 +3,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { FaFileUpload, FaQuestionCircle } from "react-icons/fa";
 import { useToast } from "@/hooks/use-toast";
+import { Button } from "@/components/ui/button";
 
 type TranscriptUploaderProps = {
   caseId: number;
@@ -19,8 +20,7 @@ export function TranscriptUploader({ caseId }: TranscriptUploaderProps) {
       const response = await apiRequest(
         "POST",
         `/api/cases/${caseId}/transcripts`,
-        undefined,
-        { body: formData, headers: {} },
+        { body: formData, headers: {} }
       );
       return response.json();
     },
@@ -84,10 +84,10 @@ export function TranscriptUploader({ caseId }: TranscriptUploaderProps) {
         <h2 className="text-lg font-semibold text-neutral-800">
           Upload Transcript
         </h2>
-        <button className="text-primary-dark hover:text-primary-light text-sm font-medium flex items-center">
-          <FaQuestionCircle className="mr-1" />
+        <Button variant="ghost" size="sm" className="text-primary-dark hover:text-primary-light flex items-center">
+          <FaQuestionCircle className="mr-1 h-4 w-4" />
           Help
-        </button>
+        </Button>
       </div>
 
       <div
@@ -110,21 +110,20 @@ export function TranscriptUploader({ caseId }: TranscriptUploaderProps) {
                 </p>
               </div>
               <div className="flex space-x-3 justify-center">
-                <button
+                <Button
+                  variant="outline"
                   onClick={() => setFile(null)}
-                  className="bg-neutral-200 hover:bg-neutral-300 text-neutral-700 font-medium py-2 px-4 rounded-md transition duration-150 ease-in-out"
                 >
                   Cancel
-                </button>
-                <button
+                </Button>
+                <Button
                   onClick={handleSubmit}
                   disabled={uploadMutation.isPending}
-                  className="bg-primary hover:bg-primary-dark text-white font-medium py-2 px-4 rounded-md transition duration-150 ease-in-out disabled:opacity-50"
                 >
                   {uploadMutation.isPending
                     ? "Uploading..."
                     : "Upload Transcript"}
-                </button>
+                </Button>
               </div>
             </>
           ) : (
@@ -138,19 +137,18 @@ export function TranscriptUploader({ caseId }: TranscriptUploaderProps) {
               </p>
 
               <div className="flex justify-center">
-                <label
-                  htmlFor="file-upload"
-                  className="cursor-pointer bg-primary hover:bg-primary-dark text-white font-medium py-2 px-4 rounded-md transition duration-150 ease-in-out"
-                >
-                  Browse Files
-                  <input
-                    id="file-upload"
-                    type="file"
-                    className="hidden"
-                    accept=".txt,.pdf,.docx"
-                    onChange={handleFileChange}
-                  />
-                </label>
+                <Button asChild>
+                  <label htmlFor="file-upload" className="cursor-pointer">
+                    Browse Files
+                    <input
+                      id="file-upload"
+                      type="file"
+                      className="hidden"
+                      accept=".txt,.pdf,.docx"
+                      onChange={handleFileChange}
+                    />
+                  </label>
+                </Button>
               </div>
             </>
           )}
