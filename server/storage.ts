@@ -138,6 +138,8 @@ export class MemStorage implements IStorage {
       ...insertCase,
       id,
       createdAt: new Date(),
+      description: insertCase.description || null,
+      caseNumber: insertCase.caseNumber || null
     };
     this.cases.set(id, newCase);
     return newCase;
@@ -163,6 +165,9 @@ export class MemStorage implements IStorage {
       id,
       status: "pending",
       createdAt: new Date(),
+      date: insertTranscript.date || null,
+      witnessType: insertTranscript.witnessType || null,
+      pages: insertTranscript.pages || null
     };
     this.transcripts.set(id, transcript);
     return transcript;

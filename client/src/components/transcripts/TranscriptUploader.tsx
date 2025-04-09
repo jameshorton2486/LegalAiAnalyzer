@@ -48,33 +48,33 @@ export function TranscriptUploader({ caseId }: TranscriptUploaderProps) {
     setIsUploading(true);
     
     try {
-      // Create FormData from the form
-      const formData = new FormData(formRef.current);
+      // Create a fresh FormData object instead of using the form directly
+      const formData = new FormData();
       
-      // Ensure the file is attached
-      if (!formData.has('file')) {
-        formData.append('file', file);
-      }
+      // Always explicitly add the file with the name 'file' that the server expects
+      formData.append('file', file);
       
-      // Add other necessary fields if not already in the form
-      if (!formData.has('title')) {
-        formData.append('title', file.name);
-      }
-      if (!formData.has('witnessName')) {
-        formData.append('witnessName', 'Unknown Witness');
-      }
+      // Add other necessary fields
+      formData.append('title', file.name);
+      formData.append('witnessName', 'Unknown Witness');
+      formData.append('witnessType', 'Witness');
+      formData.append('caseId', caseId.toString());
+      
+      console.log('Uploading file:', file.name, 'size:', file.size);
       
       // Use the traditional fetch approach
       const response = await fetch(`/api/cases/${caseId}/transcripts`, {
         method: 'POST',
-        body: formData,
-        credentials: 'include'
+        body: formData
       });
       
       if (!response.ok) {
         const errorText = await response.text();
         throw new Error(errorText || response.statusText);
       }
+      
+      const result = await response.json();
+      console.log('Upload success:', result);
       
       // Success!
       queryClient.invalidateQueries({
@@ -116,8 +116,6 @@ export function TranscriptUploader({ caseId }: TranscriptUploaderProps) {
         ref={formRef} 
         onSubmit={handleSubmit} 
         encType="multipart/form-data"
-        method="post"
-        action={`/api/cases/${caseId}/transcripts`}
       >
         <input type="hidden" name="caseId" value={caseId} />
         
