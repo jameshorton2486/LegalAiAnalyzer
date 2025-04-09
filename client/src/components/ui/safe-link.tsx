@@ -2,10 +2,11 @@ import React from "react";
 import { Link as WouterLink, useLocation, useRoute } from "wouter";
 import { sanitizeUrl } from "@/lib/utils";
 
-interface SafeLinkProps extends React.ComponentPropsWithoutRef<typeof WouterLink> {
+interface SafeLinkProps {
   href: string;
   className?: string;
   children: React.ReactNode;
+  [key: string]: any; // Allow any other props that might come from WouterLink
 }
 
 /**
