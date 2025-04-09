@@ -1,6 +1,5 @@
-import { useState } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { apiRequest } from "@/lib/queryClient";
+import { useState, useRef } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { FaFileUpload, FaQuestionCircle } from "react-icons/fa";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
@@ -11,37 +10,11 @@ type TranscriptUploaderProps = {
 
 export function TranscriptUploader({ caseId }: TranscriptUploaderProps) {
   const [file, setFile] = useState<File | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
+  const formRef = useRef<HTMLFormElement>(null);
   const queryClient = useQueryClient();
   const { toast } = useToast();
-
-  const uploadMutation = useMutation({
-    mutationFn: async (formData: FormData) => {
-      const response = await apiRequest(
-        "POST",
-        `/api/cases/${caseId}/transcripts`,
-        { body: formData, headers: {} }
-      );
-      return response.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: [`/api/cases/${caseId}/transcripts`],
-      });
-      toast({
-        title: "Success",
-        description: "Transcript uploaded successfully.",
-      });
-      setFile(null);
-    },
-    onError: (error) => {
-      toast({
-        title: "Error",
-        description: `Failed to upload transcript: ${error.message}`,
-        variant: "destructive",
-      });
-    },
-  });
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -67,15 +40,64 @@ export function TranscriptUploader({ caseId }: TranscriptUploaderProps) {
     }
   };
 
-  const handleSubmit = () => {
-    if (!file) return;
-
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("title", file.name);
-    formData.append("witnessName", "Unknown Witness");
-
-    uploadMutation.mutate(formData);
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!file || !formRef.current) return;
+    
+    setIsUploading(true);
+    
+    try {
+      // Create FormData from the form
+      const formData = new FormData(formRef.current);
+      
+      // Ensure the file is attached
+      if (!formData.has('file')) {
+        formData.append('file', file);
+      }
+      
+      // Add other necessary fields if not already in the form
+      if (!formData.has('title')) {
+        formData.append('title', file.name);
+      }
+      if (!formData.has('witnessName')) {
+        formData.append('witnessName', 'Unknown Witness');
+      }
+      
+      // Use the traditional fetch approach
+      const response = await fetch(`/api/cases/${caseId}/transcripts`, {
+        method: 'POST',
+        body: formData,
+        credentials: 'include'
+      });
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || response.statusText);
+      }
+      
+      // Success!
+      queryClient.invalidateQueries({
+        queryKey: [`/api/cases/${caseId}/transcripts`],
+      });
+      
+      toast({
+        title: "Success",
+        description: "Transcript uploaded successfully.",
+      });
+      
+      setFile(null);
+      
+    } catch (error) {
+      console.error("Upload error:", error);
+      toast({
+        title: "Error",
+        description: `Failed to upload transcript: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        variant: "destructive",
+      });
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   return (
@@ -90,70 +112,82 @@ export function TranscriptUploader({ caseId }: TranscriptUploaderProps) {
         </Button>
       </div>
 
-      <div
-        className={`border-2 border-dashed rounded-lg p-6 text-center ${
-          isDragging
-            ? "border-primary bg-primary-light bg-opacity-5"
-            : "border-neutral-300"
-        }`}
-        onDragOver={handleDragOver}
-        onDragLeave={handleDragLeave}
-        onDrop={handleDrop}
+      <form 
+        ref={formRef} 
+        onSubmit={handleSubmit} 
+        encType="multipart/form-data"
+        method="post"
+        action={`/api/cases/${caseId}/transcripts`}
       >
-        <div className="mx-auto max-w-md">
-          {file ? (
-            <>
-              <div className="mb-4 p-3 bg-neutral-100 rounded-md">
-                <p className="font-medium">{file.name}</p>
-                <p className="text-sm text-neutral-500">
-                  {(file.size / 1024 / 1024).toFixed(2)} MB
+        <input type="hidden" name="caseId" value={caseId} />
+        
+        <div
+          className={`border-2 border-dashed rounded-lg p-6 text-center ${
+            isDragging
+              ? "border-primary bg-primary-light bg-opacity-5"
+              : "border-neutral-300"
+          }`}
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+          onDrop={handleDrop}
+        >
+          <div className="mx-auto max-w-md">
+            {file ? (
+              <>
+                <div className="mb-4 p-3 bg-neutral-100 rounded-md">
+                  <p className="font-medium">{file.name}</p>
+                  <p className="text-sm text-neutral-500">
+                    {(file.size / 1024 / 1024).toFixed(2)} MB
+                  </p>
+                  <input type="hidden" name="title" value={file.name} />
+                  <input type="hidden" name="witnessName" value="Unknown Witness" />
+                </div>
+                <div className="flex space-x-3 justify-center">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => setFile(null)}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    type="submit"
+                    disabled={isUploading}
+                  >
+                    {isUploading ? "Uploading..." : "Upload Transcript"}
+                  </Button>
+                </div>
+              </>
+            ) : (
+              <>
+                <FaFileUpload className="mx-auto text-neutral-400 text-3xl mb-2" />
+                <h3 className="text-lg font-medium text-neutral-700 mb-1">
+                  Drop your transcript file here
+                </h3>
+                <p className="text-neutral-600 mb-4">
+                  Support for .txt, .pdf, .docx files. Max file size: 50MB
                 </p>
-              </div>
-              <div className="flex space-x-3 justify-center">
-                <Button
-                  variant="outline"
-                  onClick={() => setFile(null)}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  onClick={handleSubmit}
-                  disabled={uploadMutation.isPending}
-                >
-                  {uploadMutation.isPending
-                    ? "Uploading..."
-                    : "Upload Transcript"}
-                </Button>
-              </div>
-            </>
-          ) : (
-            <>
-              <FaFileUpload className="mx-auto text-neutral-400 text-3xl mb-2" />
-              <h3 className="text-lg font-medium text-neutral-700 mb-1">
-                Drop your transcript file here
-              </h3>
-              <p className="text-neutral-600 mb-4">
-                Support for .txt, .pdf, .docx files. Max file size: 50MB
-              </p>
 
-              <div className="flex justify-center">
-                <Button asChild>
-                  <label htmlFor="file-upload" className="cursor-pointer">
-                    Browse Files
-                    <input
-                      id="file-upload"
-                      type="file"
-                      className="hidden"
-                      accept=".txt,.pdf,.docx"
-                      onChange={handleFileChange}
-                    />
-                  </label>
-                </Button>
-              </div>
-            </>
-          )}
+                <div className="flex justify-center">
+                  <Button type="button" asChild>
+                    <label htmlFor="file-upload" className="cursor-pointer">
+                      Browse Files
+                      <input
+                        id="file-upload"
+                        name="file"
+                        type="file"
+                        className="hidden"
+                        accept=".txt,.pdf,.docx"
+                        onChange={handleFileChange}
+                      />
+                    </label>
+                  </Button>
+                </div>
+              </>
+            )}
+          </div>
         </div>
-      </div>
+      </form>
     </div>
   );
 }
