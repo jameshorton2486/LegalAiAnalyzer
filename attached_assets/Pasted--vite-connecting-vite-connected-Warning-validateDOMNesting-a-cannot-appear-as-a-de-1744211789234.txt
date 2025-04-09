@@ -1,0 +1,35 @@
+[vite] connecting...
+[vite] connected.
+Warning: validateDOMNesting(...): <a> cannot appear as a descendant of &lt;a&gt;.
+    at a
+    at a
+    at https://d68d2f41-5f6e-4619-acfa-afc067d881d5-00-3uj2jzmm0ea3z.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=fc36b193:337:18
+    at div
+    at header
+    at Header
+    at div
+    at Layout (https://d68d2f41-5f6e-4619-acfa-afc067d881d5-00-3uj2jzmm0ea3z.spock.replit.dev/src/components/layout/Layout.tsx:19:26)
+    at Dashboard (https://d68d2f41-5f6e-4619-acfa-afc067d881d5-00-3uj2jzmm0ea3z.spock.replit.dev/src/pages/Dashboard.tsx:26:38)
+    at Route (https://d68d2f41-5f6e-4619-acfa-afc067d881d5-00-3uj2jzmm0ea3z.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=fc36b193:323:16)
+    at Switch (https://d68d2f41-5f6e-4619-acfa-afc067d881d5-00-3uj2jzmm0ea3z.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=fc36b193:379:17)
+    at Router
+    at QueryClientProvider (https://d68d2f41-5f6e-4619-acfa-afc067d881d5-00-3uj2jzmm0ea3z.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=fc36b193:2805:3)
+    at App
+at a
+at a
+at https://d68d2f41-5f6e-4619-acfa-afc067d881d5-00-3uj2jzmm0ea3z.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=fc36b193:337:18
+at div
+at header
+at Header
+at div
+at Layout (https://d68d2f41-5f6e-4619-acfa-afc067d881d5-00-3uj2jzmm0ea3z.spock.replit.dev/src/components/layout/Layout.tsx:19:26)
+at Dashboard (https://d68d2f41-5f6e-4619-acfa-afc067d881d5-00-3uj2jzmm0ea3z.spock.replit.dev/src/pages/Dashboard.tsx:26:38)
+at Route (https://d68d2f41-5f6e-4619-acfa-afc067d881d5-00-3uj2jzmm0ea3z.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=fc36b193:323:16)
+at Switch (https://d68d2f41-5f6e-4619-acfa-afc067d881d5-00-3uj2jzmm0ea3z.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=fc36b193:379:17)
+at Router
+at QueryClientProvider (https://d68d2f41-5f6e-4619-acfa-afc067d881d5-00-3uj2jzmm0ea3z.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=fc36b193:2805:3)
+at App
+at t.value (https://d68d2f41-5f6e-4619-acfa-afc067d881d5-00-3uj2jzmm0ea3z.spock.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:17465)
+at new t (https://d68d2f41-5f6e-4619-acfa-afc067d881d5-00-3uj2jzmm0ea3z.spock.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:12630)
+at t.value (https://d68d2f41-5f6e-4619-acfa-afc067d881d5-00-3uj2jzmm0ea3z.spock.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:32766)
+at https://d68d2f41-5f6e-4619-acfa-afc067d881d5-00-3uj2jzmm0ea3z.spock.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:34400

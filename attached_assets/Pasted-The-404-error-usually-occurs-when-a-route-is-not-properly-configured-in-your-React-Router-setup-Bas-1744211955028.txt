@@ -1,0 +1,111 @@
+The 404 error usually occurs when a route is not properly configured in your React Router setup. Based on the App.jsx code I saw earlier, you already have a NotFound route. Here are a few steps to troubleshoot and fix the 404 error:
+
+Check Route Configuration:
+
+jsximport React from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Landing from './pages/Landing';
+import Index from './pages/Index';
+import Rules from './pages/Rules';
+import TranscriptEditor from './pages/TranscriptEditor';
+import NotFound from './pages/NotFound';
+import './App.css';
+
+function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Index />} />
+        <Route path="/landing" element={<Landing />} />
+        <Route path="/rules" element={<Rules />} />
+        <Route path="/transcript/:id" element={<TranscriptEditor />} />
+        <Route path="*" element={<NotFound />} /> {/* Catch-all route */}
+      </Routes>
+    </BrowserRouter>
+  );
+}
+
+export default App;
+
+Verify Page Files:
+Ensure you have created all the necessary page files in the src/pages/ directory:
+
+
+Landing.jsx
+Index.jsx
+Rules.jsx
+TranscriptEditor.jsx
+NotFound.jsx
+
+
+Sample NotFound Page:
+
+jsximport React from 'react';
+import { Link } from 'react-router-dom';
+
+function NotFound() {
+  return (
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+      <h1 className="text-4xl font-bold text-red-500 mb-4">404 - Page Not Found</h1>
+      <p className="text-lg mb-6">The page you are looking for does not exist.</p>
+      <Link 
+        to="/" 
+        className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+      >
+        Go to Home
+      </Link>
+    </div>
+  );
+}
+
+export default NotFound;
+
+Replit Specific Configuration:
+In Replit, you might need to configure the server to handle client-side routing. Create a replit.nix file in your project root:
+
+nix{ pkgs }: {
+  deps = [
+    pkgs.nodejs-16_x
+  ];
+  env = {
+    HOST = "0.0.0.0";
+    PORT = "3000";
+  };
+}
+
+Vite Configuration:
+In your vite.config.js, add:
+
+javascriptimport { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+
+export default defineConfig({
+  plugins: [react()],
+  server: {
+    historyApiFallback: true
+  }
+});
+
+Package.json Scripts:
+Ensure your package.json has the correct scripts:
+
+json{
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  }
+}
+Troubleshooting Steps:
+
+Double-check all import paths
+Verify that all page components exist
+Ensure React Router is correctly installed
+Check for any typos in route paths
+Restart your Replit development server
+
+If you're still experiencing issues, could you share:
+
+The contents of your project structure
+Any specific error messages in the console
+Your current routing setup

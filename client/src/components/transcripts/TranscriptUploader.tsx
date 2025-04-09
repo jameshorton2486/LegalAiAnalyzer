@@ -20,12 +20,14 @@ export function TranscriptUploader({ caseId }: TranscriptUploaderProps) {
         "POST",
         `/api/cases/${caseId}/transcripts`,
         undefined,
-        { body: formData, headers: {} }
+        { body: formData, headers: {} },
       );
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [`/api/cases/${caseId}/transcripts`] });
+      queryClient.invalidateQueries({
+        queryKey: [`/api/cases/${caseId}/transcripts`],
+      });
       toast({
         title: "Success",
         description: "Transcript uploaded successfully.",
@@ -72,23 +74,27 @@ export function TranscriptUploader({ caseId }: TranscriptUploaderProps) {
     formData.append("file", file);
     formData.append("title", file.name);
     formData.append("witnessName", "Unknown Witness");
-    
+
     uploadMutation.mutate(formData);
   };
 
   return (
     <div className="bg-white rounded-lg shadow-md p-6 mb-6">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-semibold text-neutral-800">Upload Transcript</h2>
+        <h2 className="text-lg font-semibold text-neutral-800">
+          Upload Transcript
+        </h2>
         <button className="text-primary-dark hover:text-primary-light text-sm font-medium flex items-center">
           <FaQuestionCircle className="mr-1" />
           Help
         </button>
       </div>
-      
-      <div 
+
+      <div
         className={`border-2 border-dashed rounded-lg p-6 text-center ${
-          isDragging ? "border-primary bg-primary-light bg-opacity-5" : "border-neutral-300"
+          isDragging
+            ? "border-primary bg-primary-light bg-opacity-5"
+            : "border-neutral-300"
         }`}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
@@ -99,7 +105,9 @@ export function TranscriptUploader({ caseId }: TranscriptUploaderProps) {
             <>
               <div className="mb-4 p-3 bg-neutral-100 rounded-md">
                 <p className="font-medium">{file.name}</p>
-                <p className="text-sm text-neutral-500">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
+                <p className="text-sm text-neutral-500">
+                  {(file.size / 1024 / 1024).toFixed(2)} MB
+                </p>
               </div>
               <div className="flex space-x-3 justify-center">
                 <button
@@ -113,23 +121,32 @@ export function TranscriptUploader({ caseId }: TranscriptUploaderProps) {
                   disabled={uploadMutation.isPending}
                   className="bg-primary hover:bg-primary-dark text-white font-medium py-2 px-4 rounded-md transition duration-150 ease-in-out disabled:opacity-50"
                 >
-                  {uploadMutation.isPending ? "Uploading..." : "Upload Transcript"}
+                  {uploadMutation.isPending
+                    ? "Uploading..."
+                    : "Upload Transcript"}
                 </button>
               </div>
             </>
           ) : (
             <>
               <FaFileUpload className="mx-auto text-neutral-400 text-3xl mb-2" />
-              <h3 className="text-lg font-medium text-neutral-700 mb-1">Drop your transcript file here</h3>
-              <p className="text-neutral-600 mb-4">Support for .txt, .pdf, .docx files. Max file size: 50MB</p>
-              
+              <h3 className="text-lg font-medium text-neutral-700 mb-1">
+                Drop your transcript file here
+              </h3>
+              <p className="text-neutral-600 mb-4">
+                Support for .txt, .pdf, .docx files. Max file size: 50MB
+              </p>
+
               <div className="flex justify-center">
-                <label htmlFor="file-upload" className="cursor-pointer bg-primary hover:bg-primary-dark text-white font-medium py-2 px-4 rounded-md transition duration-150 ease-in-out">
+                <label
+                  htmlFor="file-upload"
+                  className="cursor-pointer bg-primary hover:bg-primary-dark text-white font-medium py-2 px-4 rounded-md transition duration-150 ease-in-out"
+                >
                   Browse Files
-                  <input 
-                    id="file-upload" 
-                    type="file" 
-                    className="hidden" 
+                  <input
+                    id="file-upload"
+                    type="file"
+                    className="hidden"
                     accept=".txt,.pdf,.docx"
                     onChange={handleFileChange}
                   />

@@ -1,4 +1,11 @@
-import { pgTable, text, serial, integer, boolean, timestamp } from "drizzle-orm/pg-core";
+import {
+  pgTable,
+  text,
+  serial,
+  integer,
+  boolean,
+  timestamp,
+} from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -91,7 +98,9 @@ export const contradictions = pgTable("contradictions", {
   createdAt: timestamp("createdAt").defaultNow(),
 });
 
-export const insertContradictionSchema = createInsertSchema(contradictions).pick({
+export const insertContradictionSchema = createInsertSchema(
+  contradictions,
+).pick({
   caseId: true,
   transcript1Id: true,
   transcript2Id: true,

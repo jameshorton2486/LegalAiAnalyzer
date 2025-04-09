@@ -12,9 +12,7 @@ export function Layout({ children }: LayoutProps) {
       <Header />
       <div className="flex-1 flex flex-col md:flex-row">
         <Sidebar />
-        <main className="flex-1 p-4 md:p-6 bg-neutral-100">
-          {children}
-        </main>
+        <main className="flex-1 p-4 md:p-6 bg-neutral-100">{children}</main>
       </div>
     </div>
   );
