@@ -28,13 +28,11 @@ export type Contradiction = {
 
 // Fetch analysis for a transcript
 export async function fetchTranscriptAnalysis(transcriptId: number) {
-  const response = await apiRequest(
+  const data = await apiRequest<any[]>(
     "GET",
-    `/api/transcripts/${transcriptId}/analysis`,
-    undefined,
+    `/api/transcripts/${transcriptId}/analysis`
   );
-  const data = await response.json();
-
+  
   // Parse JSON content from analysis items
   return data.map((item: any) => ({
     ...item,
@@ -74,7 +72,7 @@ export async function compareTranscripts(
   transcriptIds: number[],
 ) {
   const response = await apiRequest("POST", `/api/cases/${caseId}/compare`, {
-    transcriptIds,
+    body: { transcriptIds }
   });
-  return await response.json();
+  return response;
 }

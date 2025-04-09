@@ -10,12 +10,32 @@ async function throwIfResNotOk(res: Response) {
 export async function apiRequest<T = Response>(
   method: string,
   url: string,
-  data?: unknown | undefined,
+  options?: {
+    body?: any;
+    headers?: Record<string, string>;
+  }
 ): Promise<T> {
-  const res = await fetch(url, {
+  // Determine if we're dealing with FormData
+  const isFormData = options?.body instanceof FormData;
+  
+  // Only set Content-Type for non-FormData requests
+  // For FormData, let the browser set the Content-Type automatically with boundary
+  const headers = isFormData 
+    ? options?.headers || {} 
+    : { "Content-Type": "application/json", ...options?.headers };
+  
+  // Handle the body correctly based on type
+  const body = options?.body 
+    ? (isFormData ? options.body : JSON.stringify(options.body)) 
+    : undefined;
+  
+  // Sanitize the URL to prevent double slash issues
+  const sanitizedUrl = url.replace(/([^:]\/)\/+/g, "$1");
+  
+  const res = await fetch(sanitizedUrl, {
     method,
-    headers: data ? { "Content-Type": "application/json" } : {},
-    body: data ? JSON.stringify(data) : undefined,
+    headers,
+    body,
     credentials: "include",
   });
 
@@ -35,7 +55,10 @@ export const getQueryFn: <T>(options: {
 }) => QueryFunction<T> =
   ({ on401: unauthorizedBehavior }) =>
   async ({ queryKey }) => {
-    const res = await fetch(queryKey[0] as string, {
+    // Sanitize the URL to prevent double slash issues
+    const url = (queryKey[0] as string).replace(/([^:]\/)\/+/g, "$1");
+    
+    const res = await fetch(url, {
       credentials: "include",
     });
 
