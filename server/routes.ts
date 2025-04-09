@@ -327,14 +327,19 @@ async function generateQuestions(transcriptContent: string) {
         },
         {
           role: "user",
-          content: `Please analyze this legal deposition transcript and suggest 5-7 follow-up questions the attorney should ask. For each question, provide: 1) A clear, specific question, 2) Reasoning for why this question is important, and 3) Reference to the relevant part of the transcript. Format your response as a JSON array of objects with fields: "question", "reasoning", and "reference". Here's the transcript:\n\n${transcriptContent.substring(0, 15000)}`,
+          content: `Please analyze this legal deposition transcript and suggest 5-7 follow-up questions the attorney should ask. For each question, provide: 1) A clear, specific question, 2) Reasoning for why this question is important, and 3) Reference to the relevant part of the transcript. Format your response as a JSON array of objects with fields: "question", "reasoning", and "reference". Here's the transcript:\n\n${transcriptContent?.substring(0, 15000) || ""}`,
         },
       ],
       response_format: { type: "json_object" },
     });
 
-    const result = JSON.parse(response.choices[0].message.content);
-    return result.questions || [];
+    const result = JSON.parse(response.choices[0]?.message?.content || '[]');
+    // If result is already an array, return it directly
+    if (Array.isArray(result)) {
+      return result;
+    }
+    // Otherwise try to find the questions property, or any array property, or return empty array
+    return result.questions || result.followUpQuestions || Object.values(result).find(Array.isArray) || [];
   } catch (error) {
     console.error("Error generating questions:", error);
     return [];
@@ -354,14 +359,19 @@ async function generateInsights(transcriptContent: string) {
         },
         {
           role: "user",
-          content: `Please analyze this legal deposition transcript and extract 5-7 key insights. For each insight, provide: 1) A concise title, 2) A detailed description of the insight, and 3) Reference to the relevant part of the transcript. Format your response as a JSON array of objects with fields: "title", "description", and "reference". Here's the transcript:\n\n${transcriptContent.substring(0, 15000)}`,
+          content: `Please analyze this legal deposition transcript and extract 5-7 key insights. For each insight, provide: 1) A concise title, 2) A detailed description of the insight, and 3) Reference to the relevant part of the transcript. Format your response as a JSON array of objects with fields: "title", "description", and "reference". Here's the transcript:\n\n${transcriptContent?.substring(0, 15000) || ""}`,
         },
       ],
       response_format: { type: "json_object" },
     });
 
-    const result = JSON.parse(response.choices[0].message.content);
-    return result.insights || [];
+    const result = JSON.parse(response.choices[0]?.message?.content || '[]');
+    // If result is already an array, return it directly
+    if (Array.isArray(result)) {
+      return result;
+    }
+    // Otherwise try to find the insights property, or any array property, or return empty array
+    return result.insights || result.keyInsights || Object.values(result).find(Array.isArray) || [];
   } catch (error) {
     console.error("Error generating insights:", error);
     return [];
@@ -381,14 +391,19 @@ async function findContradictions(content1: string, content2: string) {
         },
         {
           role: "user",
-          content: `Compare these two deposition transcripts and identify any contradictions between the testimonies. For each contradiction, provide: 1) A description of the contradiction, 2) The relevant excerpt from the first transcript, and 3) The relevant excerpt from the second transcript. Format your response as a JSON array of objects with fields: "description", "excerpt1", and "excerpt2". If no contradictions are found, return an empty array. Here are the transcripts:\n\nTRANSCRIPT 1:\n${content1.substring(0, 10000)}\n\nTRANSCRIPT 2:\n${content2.substring(0, 10000)}`,
+          content: `Compare these two deposition transcripts and identify any contradictions between the testimonies. For each contradiction, provide: 1) A description of the contradiction, 2) The relevant excerpt from the first transcript, and 3) The relevant excerpt from the second transcript. Format your response as a JSON array of objects with fields: "description", "excerpt1", and "excerpt2". If no contradictions are found, return an empty array. Here are the transcripts:\n\nTRANSCRIPT 1:\n${content1?.substring(0, 10000) || ""}\n\nTRANSCRIPT 2:\n${content2?.substring(0, 10000) || ""}`,
         },
       ],
       response_format: { type: "json_object" },
     });
 
-    const result = JSON.parse(response.choices[0].message.content);
-    return result.contradictions || [];
+    const result = JSON.parse(response.choices[0]?.message?.content || '[]');
+    // If result is already an array, return it directly
+    if (Array.isArray(result)) {
+      return result;
+    }
+    // Otherwise try to find the contradictions property, or any array property, or return empty array
+    return result.contradictions || result.findings || Object.values(result).find(Array.isArray) || [];
   } catch (error) {
     console.error("Error finding contradictions:", error);
     return [];

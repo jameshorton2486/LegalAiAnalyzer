@@ -128,10 +128,8 @@ export function TranscriptsList({ caseId }: TranscriptsListProps) {
                       </span>
                     </td>
                     <td className="px-4 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <Link href={`/transcripts/${transcript.id}`}>
-                        <a className="text-primary-dark hover:text-primary-light mr-3">
+                      <Link href={`/transcripts/${transcript.id}`} className="text-primary-dark hover:text-primary-light mr-3">
                           View
-                        </a>
                       </Link>
                       <button className="text-neutral-600 hover:text-neutral-800">
                         <FaEllipsisV />
