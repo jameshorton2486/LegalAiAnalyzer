@@ -45,16 +45,23 @@ export function TranscriptUploader({ caseId }: TranscriptUploaderProps) {
     
     if (!file || !formRef.current) return;
     
+    // Validate file type
+    const allowedTypes = ['.txt', '.docx'];
+    const fileExt = file.name.substring(file.name.lastIndexOf('.')).toLowerCase();
+    if (!allowedTypes.includes(fileExt)) {
+      toast({
+        title: "Error",
+        description: "Only .txt and .docx files are allowed",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     setIsUploading(true);
     
     try {
-      // Create a fresh FormData object instead of using the form directly
       const formData = new FormData();
-      
-      // Always explicitly add the file with the name 'file' that the server expects
       formData.append('file', file);
-      
-      // Add other necessary fields
       formData.append('title', file.name);
       formData.append('witnessName', 'Unknown Witness');
       formData.append('witnessType', 'Witness');
@@ -62,7 +69,6 @@ export function TranscriptUploader({ caseId }: TranscriptUploaderProps) {
       
       console.log('Uploading file:', file.name, 'size:', file.size);
       
-      // Use the traditional fetch approach
       const response = await fetch(`/api/cases/${caseId}/transcripts`, {
         method: 'POST',
         body: formData

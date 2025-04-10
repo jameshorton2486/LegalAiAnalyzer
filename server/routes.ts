@@ -27,6 +27,14 @@ const upload = multer({
       }
       cb(null, uploadDir);
     },
+    fileFilter: (req, file, cb) => {
+      const ext = path.extname(file.originalname).toLowerCase();
+      if (ext === '.txt' || ext === '.docx') {
+        cb(null, true);
+      } else {
+        cb(new Error('Only .txt and .docx files are allowed'));
+      }
+    },
     filename: (req, file, cb) => {
       const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
       cb(null, uniqueSuffix + "-" + file.originalname);
