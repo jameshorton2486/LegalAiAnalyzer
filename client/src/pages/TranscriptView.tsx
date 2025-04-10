@@ -13,10 +13,7 @@ import {
 } from "react-icons/fa";
 import { TranscriptViewer } from "@/components/analysis/TranscriptViewer";
 import { useState } from "react";
-import {
-  fetchTranscriptAnalysis,
-  getQuestionsFromAnalysis,
-} from "@/lib/openai";
+import { analyzeTranscript } from "@/lib/openai";
 import { Question } from "@/lib/openai";
 import { format } from "date-fns";
 
@@ -31,15 +28,8 @@ export default function TranscriptView() {
     enabled: !isNaN(transcriptId),
   });
 
-  // Fetch transcript analysis
-  const { data: analysisData } = useQuery({
-    queryKey: [`/api/transcripts/${transcriptId}/analysis`],
-    queryFn: () => fetchTranscriptAnalysis(transcriptId),
-    enabled: !isNaN(transcriptId) && !!transcript,
-  });
-
-  // Extract questions from analysis
-  const questions = analysisData ? getQuestionsFromAnalysis(analysisData) : [];
+  // Get local analysis
+  const questions = transcript?.analysis ? JSON.parse(transcript.analysis).questions : [];
 
   // Format transcript content preview
   const formatPreview = (content: string, maxLength = 500) => {
