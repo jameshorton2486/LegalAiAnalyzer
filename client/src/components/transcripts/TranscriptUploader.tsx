@@ -86,7 +86,6 @@ export function TranscriptUploader({ caseId }: TranscriptUploaderProps) {
         throw new Error('Server returned invalid response');
       }
       
-      const result = await response.json();
       console.log('Upload success:', result);
       
       // Success!
