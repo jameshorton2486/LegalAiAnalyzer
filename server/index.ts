@@ -1,6 +1,7 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+import { pushToGithub } from './utils/pushToGithub';
 
 const app = express();
 app.use(express.json());
@@ -36,6 +37,21 @@ app.use((req, res, next) => {
   next();
 });
 
+// Add GitHub push endpoint
+app.post('/api/push-to-github', async (req, res) => {
+  try {
+    const result = await pushToGithub();
+    if (result) {
+      res.json({ success: true });
+    } else {
+      res.status(500).json({ error: 'Failed to push to GitHub' });
+    }
+  } catch (error) {
+    res.status(500).json({ error: String(error) });
+  }
+});
+
+
 (async () => {
   const server = await registerRoutes(app);
 
@@ -47,18 +63,12 @@ app.use((req, res, next) => {
     throw err;
   });
 
-  // importantly only setup vite in development and after
-  // setting up all the other routes so the catch-all route
-  // doesn't interfere with the other routes
   if (app.get("env") === "development") {
     await setupVite(app, server);
   } else {
     serveStatic(app);
   }
 
-  // ALWAYS serve the app on port 5000
-  // this serves both the API and the client.
-  // It is the only port that is not firewalled.
   const port = 5000;
   server.listen(
     {
