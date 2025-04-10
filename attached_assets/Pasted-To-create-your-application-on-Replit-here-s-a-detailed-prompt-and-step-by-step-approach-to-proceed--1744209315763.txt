@@ -1,4 +1,12 @@
-To create your application on Replit, here’s a detailed prompt and step-by-step approach to proceed with your idea:
+import { createAndDownloadZip } from '@/lib/utils';
+
+// Example usage
+const files = [
+  { name: 'transcript1.txt', content: 'transcript content...' },
+  { name: 'transcript2.txt', content: 'another transcript...' }
+];
+
+await createAndDownloadZip(files);To create your application on Replit, here’s a detailed prompt and step-by-step approach to proceed with your idea:
 
 Prompt for the Application
 "Build a web-based application that allows users to upload legal deposition transcripts in text format. The application should utilize AI to review the transcript and suggest follow-up questions for the attorney conducting the deposition. Additionally, users should be able to upload multiple transcripts from the same case, and the AI should compare them to identify contradictions or inconsistencies between witnesses. The platform must prioritize data security and allow users to download AI-generated insights."
