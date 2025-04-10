@@ -1,5 +1,5 @@
+
 import { Header } from "./Header";
-import { Sidebar } from "./Sidebar";
 import { ReactNode } from "react";
 
 type LayoutProps = {
@@ -8,12 +8,14 @@ type LayoutProps = {
 
 export function Layout({ children }: LayoutProps) {
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="min-h-screen bg-neutral-50">
       <Header />
-      <div className="flex-1 flex flex-col md:flex-row">
-        <Sidebar />
-        <main className="flex-1 p-4 md:p-6 bg-neutral-100">{children}</main>
-      </div>
+      <main className="container mx-auto px-4 py-6 max-w-7xl">
+        {children}
+      </main>
+      <footer className="mt-auto py-4 text-center text-sm text-neutral-500">
+        <p>Legal Transcript Analyzer • Simplify your deposition analysis</p>
+      </footer>
     </div>
   );
 }
