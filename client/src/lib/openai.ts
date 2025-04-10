@@ -1,4 +1,9 @@
-import { apiRequest } from "@/lib/queryClient";
+import OpenAI from 'openai';
+
+const openai = new OpenAI({ 
+  apiKey: localStorage.getItem('openai_api_key') || '',
+  dangerouslyAllowBrowser: true 
+});
 
 export type Question = {
   question: string;
@@ -12,67 +17,48 @@ export type Insight = {
   reference: string;
 };
 
-export type Contradiction = {
-  id: number;
-  caseId: number;
-  transcript1Id: number;
-  transcript2Id: number;
-  description: string;
-  witness1: string;
-  witness2: string;
-  testimony1: string;
-  testimony2: string;
-  confidence: number;
-  createdAt: Date;
-};
+export async function analyzeTranscript(content: string) {
+  try {
+    const response = await openai.chat.completions.create({
+      model: "gpt-4",
+      messages: [
+        {
+          role: "system",
+          content: "You are an expert legal assistant analyzing deposition transcripts."
+        },
+        {
+          role: "user",
+          content: `Analyze this transcript and provide key insights and questions: ${content}`
+        }
+      ]
+    });
 
-// Fetch analysis for a transcript
-export async function fetchTranscriptAnalysis(transcriptId: number) {
-  const data = await apiRequest<any[]>(
-    "GET",
-    `/api/transcripts/${transcriptId}/analysis`
-  );
-  
-  // Parse JSON content from analysis items
-  return data.map((item: any) => ({
-    ...item,
-    parsedContent: JSON.parse(item.content),
-  }));
+    return response.choices[0]?.message?.content;
+  } catch (error) {
+    console.error('Error analyzing transcript:', error);
+    throw error;
+  }
 }
 
-// Get suggested questions from analysis
-export function getQuestionsFromAnalysis(analysisItems: any[]) {
-  const questionsAnalysis = analysisItems.find(
-    (item) => item.type === "questions",
-  );
-  return questionsAnalysis ? questionsAnalysis.parsedContent : [];
-}
+export async function findContradictions(content1: string, content2: string) {
+  try {
+    const response = await openai.chat.completions.create({
+      model: "gpt-4",
+      messages: [
+        {
+          role: "system",
+          content: "Compare these two testimonies and identify contradictions."
+        },
+        {
+          role: "user",
+          content: `Compare:\n\nTranscript 1:\n${content1}\n\nTranscript 2:\n${content2}`
+        }
+      ]
+    });
 
-// Get insights from analysis
-export function getInsightsFromAnalysis(analysisItems: any[]) {
-  const insightsAnalysis = analysisItems.find(
-    (item) => item.type === "insights",
-  );
-  return insightsAnalysis ? insightsAnalysis.parsedContent : [];
-}
-
-// Fetch contradictions for a case
-export async function fetchCaseContradictions(caseId: number) {
-  return apiRequest<Contradiction[]>('GET', `/api/contradictions?caseId=${caseId}`);
-}
-
-// Fetch all contradictions
-export async function fetchAllContradictions() {
-  return apiRequest<Contradiction[]>('GET', '/api/contradictions');
-}
-
-// Initiate a comparison between transcripts
-export async function compareTranscripts(
-  caseId: number,
-  transcriptIds: number[],
-) {
-  const response = await apiRequest("POST", `/api/cases/${caseId}/compare`, {
-    body: { transcriptIds }
-  });
-  return response;
+    return response.choices[0]?.message?.content;
+  } catch (error) {
+    console.error('Error finding contradictions:', error);
+    throw error;
+  }
 }
