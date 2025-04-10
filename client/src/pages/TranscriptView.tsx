@@ -1,3 +1,4 @@
+
 import { Layout } from "@/components/layout/Layout";
 import { useParams, Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";

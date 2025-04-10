@@ -11,7 +11,7 @@ import { Layout } from "@/components/layout/Layout";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MdCompareArrows } from "react-icons/md";
 import type { Contradiction } from "@/lib/openai";
-import { findContradictions, fetchCaseContradictions } from "@/lib/openai"; //Updated import
+import { findContradictions } from "@/lib/openai";
 
 export default function Contradictions() {
   const [, params] = useRoute("/contradictions/:caseId?");
@@ -31,7 +31,10 @@ export default function Contradictions() {
   // Fetch all contradictions or filter by caseId
   const contradictionsQuery = useQuery<Contradiction[]>({
     queryKey: ['/api/contradictions', caseId],
-    queryFn: () => caseId ? fetchCaseContradictions(caseId) : findContradictions(), //Updated function call
+    queryFn: () => {
+      const transcripts = JSON.parse(localStorage.getItem('transcripts') || '[]');
+      return findContradictions(transcripts[0]?.content || '', transcripts[1]?.content || '');
+    },
   });
 
   // Get all cases for the case selector
