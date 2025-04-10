@@ -11,16 +11,16 @@ import { Layout } from "@/components/layout/Layout";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MdCompareArrows } from "react-icons/md";
 import type { Contradiction } from "@/lib/openai";
-import { fetchAllContradictions, fetchCaseContradictions } from "@/lib/openai";
+import { findContradictions, fetchCaseContradictions } from "@/lib/openai"; //Updated import
 
 export default function Contradictions() {
   const [, params] = useRoute("/contradictions/:caseId?");
   const caseId = params?.caseId ? parseInt(params.caseId) : undefined;
   const [location, setLocation] = useLocation();
-  
+
   // Define types for API responses
   type Case = { id: number; title: string; caseNumber: string; description: string; createdAt: Date };
-  
+
   // Fetch case data if caseId is provided
   const caseQuery = useQuery<Case>({
     queryKey: ['/api/cases', caseId],
@@ -31,7 +31,7 @@ export default function Contradictions() {
   // Fetch all contradictions or filter by caseId
   const contradictionsQuery = useQuery<Contradiction[]>({
     queryKey: ['/api/contradictions', caseId],
-    queryFn: () => caseId ? fetchCaseContradictions(caseId) : fetchAllContradictions(),
+    queryFn: () => caseId ? fetchCaseContradictions(caseId) : findContradictions(), //Updated function call
   });
 
   // Get all cases for the case selector
@@ -166,7 +166,7 @@ function ContradictionCard({ contradiction }: { contradiction: Contradiction }) 
           </Badge>
         </div>
       </CardHeader>
-      
+
       <CardContent>
         <Tabs defaultValue="testimony1">
           <TabsList className="mb-4">
@@ -177,19 +177,19 @@ function ContradictionCard({ contradiction }: { contradiction: Contradiction }) 
               Compare
             </TabsTrigger>
           </TabsList>
-          
+
           <TabsContent value="testimony1">
             <div className="bg-muted/40 p-4 rounded-md">
               <p className="whitespace-pre-line">{contradiction.testimony1}</p>
             </div>
           </TabsContent>
-          
+
           <TabsContent value="testimony2">
             <div className="bg-muted/40 p-4 rounded-md">
               <p className="whitespace-pre-line">{contradiction.testimony2}</p>
             </div>
           </TabsContent>
-          
+
           <TabsContent value="compare">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="bg-blue-50 p-4 rounded-md">
