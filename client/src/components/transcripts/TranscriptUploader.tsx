@@ -13,6 +13,7 @@ export function TranscriptUploader({ caseId }: TranscriptUploaderProps) {
   const [isUploading, setIsUploading] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null); // Added ref for file input
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
@@ -42,23 +43,23 @@ export function TranscriptUploader({ caseId }: TranscriptUploaderProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!file || !formRef.current) return;
-    
+
     // Validate file type
-    const allowedTypes = ['.txt', '.docx'];
+    const allowedTypes = ['.txt', '.docx', '.pdf']; // Added .pdf
     const fileExt = file.name.substring(file.name.lastIndexOf('.')).toLowerCase();
     if (!allowedTypes.includes(fileExt)) {
       toast({
         title: "Error",
-        description: "Only .txt and .docx files are allowed",
+        description: "Only .txt, .docx, and .pdf files are allowed",
         variant: "destructive",
       });
       return;
     }
-    
+
     setIsUploading(true);
-    
+
     try {
       const formData = new FormData();
       formData.append('file', file);
@@ -66,14 +67,14 @@ export function TranscriptUploader({ caseId }: TranscriptUploaderProps) {
       formData.append('witnessName', 'Unknown Witness');
       formData.append('witnessType', 'Witness');
       formData.append('caseId', caseId.toString());
-      
+
       console.log('Uploading file:', file.name, 'size:', file.size);
-      
+
       const response = await fetch(`/api/cases/${caseId}/transcripts`, {
         method: 'POST',
         body: formData
       });
-      
+
       if (!response.ok) {
         const errorText = await response.text();
         console.error('Upload failed:', response.status, errorText);
@@ -85,21 +86,21 @@ export function TranscriptUploader({ caseId }: TranscriptUploaderProps) {
         console.error('Invalid response:', result);
         throw new Error('Server returned invalid response');
       }
-      
+
       console.log('Upload success:', result);
-      
+
       // Success!
       queryClient.invalidateQueries({
         queryKey: [`/api/cases/${caseId}/transcripts`],
       });
-      
+
       toast({
         title: "Success",
         description: "Transcript uploaded successfully.",
       });
-      
+
       setFile(null);
-      
+
     } catch (error) {
       console.error("Upload error:", error);
       toast({
@@ -111,6 +112,11 @@ export function TranscriptUploader({ caseId }: TranscriptUploaderProps) {
       setIsUploading(false);
     }
   };
+
+  const handleBrowseClick = () => {
+    fileInputRef.current?.click();
+  };
+
 
   return (
     <div className="bg-white rounded-lg shadow-md p-6 mb-6">
@@ -130,7 +136,14 @@ export function TranscriptUploader({ caseId }: TranscriptUploaderProps) {
         encType="multipart/form-data"
       >
         <input type="hidden" name="caseId" value={caseId} />
-        
+        <input
+          type="file"
+          ref={fileInputRef}
+          className="hidden"
+          accept=".txt,.pdf,.docx"
+          onChange={handleFileChange}
+        /> {/* Hidden file input */}
+
         <div
           className={`border-2 border-dashed rounded-lg p-6 text-center ${
             isDragging
@@ -179,18 +192,8 @@ export function TranscriptUploader({ caseId }: TranscriptUploaderProps) {
                 </p>
 
                 <div className="flex justify-center">
-                  <Button type="button" asChild>
-                    <label htmlFor="file-upload" className="cursor-pointer">
-                      Browse Files
-                      <input
-                        id="file-upload"
-                        name="file"
-                        type="file"
-                        className="hidden"
-                        accept=".txt,.pdf,.docx"
-                        onChange={handleFileChange}
-                      />
-                    </label>
+                  <Button type="button" onClick={handleBrowseClick}> {/* Added onClick */}
+                    Browse Files
                   </Button>
                 </div>
               </>
