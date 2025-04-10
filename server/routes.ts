@@ -154,27 +154,40 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Determine page count (simple approximation)
         const pages = Math.ceil(content.split("\n").length / 25);
 
-        // Validate and create transcript
-        const transcriptData = {
-          caseId,
-          title: req.body.title || req.file.originalname,
-          witnessName: req.body.witnessName || "Unknown Witness",
-          witnessType: req.body.witnessType || "Witness",
-          date: req.body.date ? new Date(req.body.date) : new Date(),
-          content,
-          pages,
-        };
+        try {
+          const transcriptData = {
+            caseId,
+            title: req.body.title || req.file.originalname,
+            witnessName: req.body.witnessName || "Unknown Witness",
+            witnessType: req.body.witnessType || "Witness",
+            date: req.body.date ? new Date(req.body.date) : new Date(),
+            content,
+            pages,
+          };
 
-        const validatedData = insertTranscriptSchema.parse(transcriptData);
-        const newTranscript = await storage.createTranscript(validatedData);
+          const validatedData = insertTranscriptSchema.parse(transcriptData);
+          const newTranscript = await storage.createTranscript(validatedData);
 
-        // Clean up the uploaded file
-        fs.unlinkSync(filePath);
+          if (!newTranscript?.id) {
+            throw new Error('Failed to save transcript');
+          }
 
-        // Process transcript with AI in the background
-        processTranscriptWithAI(newTranscript.id).catch(console.error);
+          // Clean up the uploaded file
+          fs.unlinkSync(filePath);
 
-        res.status(201).json(newTranscript);
+          // Process transcript with AI in the background
+          processTranscriptWithAI(newTranscript.id).catch(console.error);
+
+          console.log('Transcript saved successfully:', newTranscript.id);
+          res.status(201).json(newTranscript);
+        } catch (error) {
+          console.error('Error saving transcript:', error);
+          // Clean up file if save failed
+          if (fs.existsSync(filePath)) {
+            fs.unlinkSync(filePath);
+          }
+          throw error;
+        }
       } catch (err) {
         handleError(err, res);
       }
@@ -417,5 +430,3 @@ async function findContradictions(content1: string, content2: string) {
     return [];
   }
 }
-
-

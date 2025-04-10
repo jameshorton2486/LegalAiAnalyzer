@@ -76,7 +76,14 @@ export function TranscriptUploader({ caseId }: TranscriptUploaderProps) {
       
       if (!response.ok) {
         const errorText = await response.text();
-        throw new Error(errorText || response.statusText);
+        console.error('Upload failed:', response.status, errorText);
+        throw new Error(errorText || `Upload failed with status ${response.status}`);
+      }
+
+      const result = await response.json();
+      if (!result?.id) {
+        console.error('Invalid response:', result);
+        throw new Error('Server returned invalid response');
       }
       
       const result = await response.json();
